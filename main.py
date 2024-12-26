@@ -75,8 +75,6 @@ for count in image_files:
 
 
 
-
-
 # cv2.drawContours(image, filtered_contours, -1, (0, 255, 0), 2)
 
 # cv2.imshow('Contours', image)
