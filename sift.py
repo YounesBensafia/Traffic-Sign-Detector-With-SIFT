@@ -53,6 +53,8 @@ repo_folder = "data_to_use/"
 
 best_match, max_matches = find_best_match(input_image, repo_folder)
 print(best_match, max_matches)
+
+# POUR AFFICHER BRQ L'IMAGE
 if best_match:
     img_input = cv2.imread(input_image)
     img_best_match = cv2.imread(os.path.join(repo_folder, best_match))
