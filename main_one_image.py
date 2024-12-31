@@ -16,13 +16,23 @@ blurred_image = cv2.GaussianBlur(gray_image, (7, 7), 0)
 low_threshold = 10
 high_threshold = 50 
 edges = cv2.Canny(blurred_image, low_threshold, high_threshold)
-
-
+# cv2.imshow('Edges', edges)
+# cv2.waitKey(0)
+# cv2.destroyAllWindows()
+# exit()
 
 contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
+cv2.drawContours(image, contours, -1, (0, 255, 0), 2)
+
+cv2.imshow('Contours', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
 filtered_contours = []
 for contour in contours:
+
     epsilon = 0.04 * cv2.arcLength(contour, True)
     approx = cv2.approxPolyDP(contour, epsilon, True)
 

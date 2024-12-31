@@ -6,7 +6,7 @@ import cv2
 import os
 import numpy as np
 
-def find_best_match(input_image_path, repo_path, min_matches=10, ratio_thresh=0.7):
+def find_best_match(input_image_path, repo_path):
     img_input = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
     if img_input is None:
         raise FileNotFoundError(f"Input image {input_image_path} not found.")
@@ -49,10 +49,12 @@ def find_best_match(input_image_path, repo_path, min_matches=10, ratio_thresh=0.
 
 
 input_image = "input.png"  
-repo_folder = "data_to_use/" 
+# repo_folder = "data_to_use/" 
+repo_folder = "images/" 
 
 best_match, max_matches = find_best_match(input_image, repo_folder)
 print(best_match, max_matches)
+
 
 # POUR AFFICHER BRQ L'IMAGE
 if best_match:

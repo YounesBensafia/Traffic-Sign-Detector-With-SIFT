@@ -7,6 +7,74 @@ from PyQt6.QtGui import QPixmap, QPainter, QPen, QColor, QImage
 import cv2
 import numpy as np
 
+class WelcomePage(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Traffic Sign Detection")
+        self.setMinimumSize(1000, 700)
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #f5f5f5;
+                font-family: 'Segoe UI', Arial;
+            }
+            QLabel {
+                color: #2c3e50;
+                font-size: 32px;
+                font-weight: bold;
+                margin: 20px;
+            }
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 15px 30px;
+                font-size: 18px;
+                min-width: 200px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+        """)
+        
+        # Main layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(40, 40, 40, 40)
+        main_layout.setSpacing(30)
+        
+        
+        center_container = QWidget()
+        center_layout = QVBoxLayout(center_container)
+        center_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+
+        
+        # Welcome text
+        welcome_label = QLabel("Welcome to\nTraffic Sign Detection")
+        welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        welcome_label.setWordWrap(True)
+        center_layout.addWidget(welcome_label)
+        
+        # Subtitle
+        subtitle_label = QLabel("Powered by SIFT Algorithm")
+        subtitle_label.setStyleSheet("font-size: 18px; color: #7f8c8d;")
+        subtitle_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        center_layout.addWidget(subtitle_label)
+        
+        # Start button
+        start_button = QPushButton("Get Started")
+        start_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        start_button.clicked.connect(self.startApplication)
+        center_layout.addWidget(start_button, 0, Qt.AlignmentFlag.AlignCenter)
+        
+        # Add center container to main layout
+        main_layout.addWidget(center_container)
+        
+    def startApplication(self):
+        self.main_window = MainWindow()
+        self.main_window.show()
+        self.close()
+
 class ImageViewer(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -240,8 +308,8 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
+    welcome_page = WelcomePage()
+    welcome_page.show()
     sys.exit(app.exec())
 
 if __name__ == "__main__":
