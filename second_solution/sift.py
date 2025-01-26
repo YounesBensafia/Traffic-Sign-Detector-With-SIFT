@@ -1,43 +1,61 @@
-import numpy as np
 import cv2
-from matplotlib import pyplot as plt
+import os
+import matplotlib.pyplot as plt
 
-def preprocess_image(image):
-    blurred = cv2.GaussianBlur(image, (5, 5), 0)
-    
-    equalized = cv2.equalizeHist(blurred)
-    
-    filtered = cv2.bilateralFilter(equalized, 9, 75, 75)
-    
-    return filtered
+# Load the reference image
+img1 = cv2.imread('image.png')
+if img1 is None:
+    raise FileNotFoundError("Reference image not found. Check the path 'images/6.jpg'.")
 
-# Read images
-img1 = cv2.imread('image.png', 0)     
-img2 = cv2.imread('images/image.png', 0)        
-
-
-img1 = preprocess_image(img1)
-img2 = preprocess_image(img2)
+folder_path = 'images'
 
 sift = cv2.SIFT_create()
 
-kp1, des1 = sift.detectAndCompute(img1, None)
-kp2, des2 = sift.detectAndCompute(img2, None)
-print(des1[0], kp1[0].pt)
+keypoints1, descriptors1 = sift.detectAndCompute(cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY), None)
 
-bf = cv2.BFMatcher()
-matches = bf.knnMatch(des1, des2, k=2)
+if descriptors1 is None:
+    raise ValueError("No keypoints detected in the reference image.")
 
-# Apply ratio test with slightly stricter threshold
-good = []
-for m, n in matches:
-    # Reduced threshold from 0.75 to 0.7 for more strict matching
-    if m.distance < 0.7 * n.distance:
-        print(m.queryIdx, m.trainIdx, m.distance, n.queryIdx, n.trainIdx, n.distance, n.imgIdx)
-        good.append([m])
+best_match_count = 0
+best_match_image = None
+best_matches = None
+best_keypoints2 = None
 
-# Draw matches
-img3 = cv2.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=2)
+for filename in os.listdir(folder_path):
+    if filename.endswith('4.jpg') or filename.endswith('4.png'):
+        img_path = os.path.join(folder_path, filename)
 
-plt.imshow(img3)
-plt.show()
+        img2 = cv2.imread(img_path)
+        if img2 is None:
+            print(f"Skipping {filename}: Unable to read image.")
+            continue
+        
+        keypoints2, descriptors2 = sift.detectAndCompute(cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY), None)
+        if descriptors2 is None:
+            print(f"Skipping {filename}: No keypoints detected.")
+            continue
+        
+        bf = cv2.BFMatcher(cv2.NORM_L2, crossCheck=True)
+        matches = bf.match(descriptors1, descriptors2)
+        
+        matches = sorted(matches, key=lambda x: x.distance)
+        
+        if len(matches) > best_match_count:
+            best_match_count = len(matches)
+            best_match_image = img2
+            best_matches = matches
+            best_keypoints2 = keypoints2
+
+if best_match_image is not None and best_keypoints2 is not None:
+    img_matches = cv2.drawMatches(
+        img1, keypoints1, best_match_image, best_keypoints2, best_matches, None
+    )
+    
+    plt.figure(figsize=(12, 6))
+    plt.imshow(cv2.cvtColor(img_matches, cv2.COLOR_BGR2RGB))
+    plt.title(f'Best Match ({best_match_count} Matches Found)')
+    plt.axis('off')
+    plt.show()
+    
+else:
+    print("No matches found.")
