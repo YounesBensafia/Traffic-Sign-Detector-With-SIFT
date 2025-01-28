@@ -20,14 +20,11 @@ while cap.isOpened():
 
     start = time.time()
 
-    # Convert to grayscale
     img1_gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 
-    # Detect keypoints and descriptors using SIFT
     keypoints_1, descriptors_1 = sift.detectAndCompute(img1_gray, None)
     keypoints_2, descriptors_2 = sift.detectAndCompute(img2, None)
 
-    # Match descriptors using the brute force matcher
     matches = bf.match(descriptors_1, descriptors_2)
     matches = sorted(matches, key=lambda x: x.distance)
 
@@ -36,19 +33,14 @@ while cap.isOpened():
 
     fps = 1 / totalTime
 
-    # Draw the first 100 matches
-    img3 = cv2.drawMatches(img1, keypoints_1, img2, keypoints_2, matches[:100], img2, flags=2)
+    img3 = cv2.drawMatches(img1, keypoints_1, img2, keypoints_2, matches[:300], img2, flags=2)
 
-    # Display FPS on the image
     cv2.putText(img3, f'FPS: {int(fps)}', (20, 450), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 0), 2)
 
-    # Show the result
     cv2.imshow('SIFT Matches', img3)
 
-    # Break on 'ESC' key press
     if cv2.waitKey(5) & 0xFF == 27:
         break
 
-# Release the capture and close windows
 cap.release()
 cv2.destroyAllWindows()
