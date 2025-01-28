@@ -35,7 +35,6 @@ def find_best_match(query_image_path, images_folder_path):
                 max_good_matches = len(good)
                 best_match = filename
 
-    # Afficher le meilleur match
     if best_match:
         print(f"Meilleur match : {best_match} avec {max_good_matches} correspondances.")
         img2 = cv2.imread(os.path.join(images_folder_path, best_match), 0)
@@ -45,7 +44,6 @@ def find_best_match(query_image_path, images_folder_path):
         for m, n in matches:
             if m.distance < 0.8 * n.distance:
                 good.append([m])
-        # Dessiner les correspondances
         img_matches = cv2.drawMatchesKnn(img1, kp1, img2, kp2, good, None, flags=cv2.DrawMatchesFlags_NOT_DRAW_SINGLE_POINTS)
         plt.imshow(img_matches)
         plt.title('Correspondances')
@@ -53,5 +51,4 @@ def find_best_match(query_image_path, images_folder_path):
     else:
         print("Aucun match significatif trouvé.")
 
-# Example usage
 find_best_match('inputs/image3.png', 'images')
